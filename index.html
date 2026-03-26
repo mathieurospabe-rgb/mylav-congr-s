@@ -7,453 +7,71 @@
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #1a2744;
-    --navy-2: #253460;
-    --gold: #C8973A;
-    --gold-l: #e8b55a;
-    --bg: #0f1829;
-    --bg-2: #162035;
-    --surface: #1e2d4a;
-    --surface-2: #243558;
-    --border: rgba(255,255,255,0.08);
-    --border-gold: rgba(200,151,58,0.35);
-    --text: #e8edf5;
-    --text-mid: #8a9bc0;
-    --text-dim: #4a5a7a;
-    --success: #2ecc8a;
-    --error: #e05c5c;
-    --radius: 14px;
+    --navy: #1a2744; --navy-2: #253460; --gold: #C8973A; --gold-l: #e8b55a;
+    --bg: #0f1829; --bg-2: #162035; --surface: #1e2d4a; --surface-2: #243558;
+    --border: rgba(255,255,255,0.08); --border-gold: rgba(200,151,58,0.35);
+    --text: #e8edf5; --text-mid: #8a9bc0; --text-dim: #4a5a7a;
+    --success: #2ecc8a; --error: #e05c5c; --radius: 14px;
   }
-
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-  }
-
-  body::before {
-    content:'';
-    position:fixed;
-    inset:0;
-    background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(200,151,58,0.07) 0%, transparent 60%);
-    pointer-events:none;
-    z-index:0;
-  }
-
-  .app {
-    width:100%;
-    max-width:520px;
-    margin:0 auto;
-    padding:0 16px 80px;
-    position:relative;
-    z-index:1;
-  }
-
-  /* HEADER */
-  .header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:18px 0 22px;
-  }
-
-  .logo {
-    display:flex;
-    align-items:center;
-    gap:9px;
-  }
-
-  .logo-mark {
-    width:34px; height:34px;
-    border-radius:9px;
-    background:linear-gradient(135deg, var(--navy-2), var(--gold));
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-family:'Syne', sans-serif;
-    font-weight:800;
-    font-size:13px;
-    color:#fff;
-    letter-spacing:0.5px;
-  }
-
-  .logo-name {
-    font-family:'Syne', sans-serif;
-    font-weight:700;
-    font-size:17px;
-    color:var(--text);
-    letter-spacing:2px;
-  }
-
-  .config-btn {
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:8px;
-    padding:7px 12px;
-    font-size:12px;
-    color:var(--text-mid);
-    cursor:pointer;
-    font-family:'DM Sans', sans-serif;
-    transition:all 0.2s;
-  }
-  .config-btn:active { background:var(--surface-2); }
-
-  /* CONGRES BAR */
-  .congres-bar {
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    padding:12px 16px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:14px;
-  }
-
+  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
+  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(200,151,58,0.07) 0%,transparent 60%); pointer-events:none; z-index:0; }
+  .app { width:100%; max-width:520px; margin:0 auto; padding:0 16px 80px; position:relative; z-index:1; }
+  .header { display:flex; align-items:center; justify-content:space-between; padding:18px 0 22px; }
+  .logo { display:flex; align-items:center; gap:9px; }
+  .logo-mark { width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--navy-2),var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff; letter-spacing:0.5px; }
+  .logo-name { font-family:'Syne',sans-serif; font-weight:700; font-size:17px; color:var(--text); letter-spacing:2px; }
+  .congres-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
   .congres-bar:focus-within { border-color:var(--border-gold); }
-
   .congres-info { flex:1; }
-
-  .congres-label {
-    font-size:10px;
-    font-weight:500;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-mid);
-    margin-bottom:3px;
-  }
-
-  .congres-input {
-    background:transparent;
-    border:none;
-    outline:none;
-    font-family:'DM Sans', sans-serif;
-    font-size:14px;
-    font-weight:500;
-    color:var(--text);
-    width:100%;
-  }
+  .congres-label { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--text-mid); margin-bottom:3px; }
+  .congres-input { background:transparent; border:none; outline:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; color:var(--text); width:100%; }
   .congres-input::placeholder { color:var(--text-dim); }
-
-  /* COUNTER */
-  .counter-bar {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    background:var(--surface);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px 16px;
-    margin-bottom:18px;
-  }
-
+  .counter-bar { display:flex; align-items:center; justify-content:space-between; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 16px; margin-bottom:18px; }
   .counter-label { font-size:13px; color:var(--text-mid); }
-
-  .counter-num {
-    font-family:'Syne', sans-serif;
-    font-size:22px;
-    font-weight:700;
-    color:var(--gold);
-  }
-
-  /* SECTION TITLE */
-  .section-title {
-    font-size:10px;
-    font-weight:600;
-    text-transform:uppercase;
-    letter-spacing:1.5px;
-    color:var(--text-dim);
-    margin-bottom:10px;
-    margin-top:18px;
-  }
-
-  /* BADGE HINT */
-  .badge-hint {
-    background:rgba(200,151,58,0.07);
-    border:1px solid var(--border-gold);
-    border-radius:10px;
-    padding:11px 14px;
-    display:flex;
-    align-items:flex-start;
-    gap:10px;
-    margin-bottom:16px;
-  }
-
+  .counter-num { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--gold); }
+  .section-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:10px; margin-top:18px; }
+  .badge-hint { background:rgba(200,151,58,0.07); border:1px solid var(--border-gold); border-radius:10px; padding:11px 14px; display:flex; align-items:flex-start; gap:10px; margin-bottom:16px; }
   .badge-hint-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
-
   .badge-hint-text { font-size:12px; color:var(--text-mid); line-height:1.5; }
-
   .badge-hint-text strong { color:var(--gold); font-weight:500; }
-
-  /* FIELDS */
-  .row-2 {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:10px;
-  }
-
+  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .field { margin-bottom:10px; }
-
-  .field-label {
-    font-size:11px;
-    font-weight:500;
-    text-transform:uppercase;
-    letter-spacing:1px;
-    color:var(--text-mid);
-    margin-bottom:6px;
-    display:block;
-  }
-
-  .field input, .field select, .field textarea {
-    width:100%;
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    padding:13px 14px;
-    font-family:'DM Sans', sans-serif;
-    font-size:15px;
-    color:var(--text);
-    outline:none;
-    transition:border-color 0.2s;
-    appearance:none;
-    -webkit-appearance:none;
-  }
-
-  .field input:focus, .field select:focus, .field textarea:focus {
-    border-color:var(--border-gold);
-    background:var(--surface-2);
-  }
-
+  .field-label { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--text-mid); margin-bottom:6px; display:block; }
+  .field input, .field textarea { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:13px 14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--text); outline:none; transition:border-color 0.2s; appearance:none; -webkit-appearance:none; }
+  .field input:focus, .field textarea:focus { border-color:var(--border-gold); background:var(--surface-2); }
   .field input::placeholder, .field textarea::placeholder { color:var(--text-dim); }
-
-  .field textarea {
-    resize:none;
-    min-height:80px;
-    font-size:14px;
-  }
-
-  /* STATUT */
-  .statut-grid {
-    display:grid;
-    grid-template-columns:1fr 1fr;
-    gap:8px;
-    margin-bottom:10px;
-  }
-
-  .statut-btn {
-    background:var(--surface);
-    border:1.5px solid var(--border);
-    border-radius:10px;
-    padding:11px 8px;
-    cursor:pointer;
-    text-align:center;
-    transition:all 0.15s;
-    font-family:'DM Sans', sans-serif;
-    font-size:12px;
-    font-weight:500;
-    color:var(--text-mid);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:4px;
-  }
-
+  .field textarea { resize:none; min-height:80px; font-size:14px; }
+  .statut-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
+  .statut-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:11px 8px; cursor:pointer; text-align:center; transition:all 0.15s; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:var(--text-mid); display:flex; flex-direction:column; align-items:center; gap:4px; }
   .statut-btn:active { transform:scale(0.97); }
-
-  .statut-btn.selected {
-    border-color:var(--gold);
-    background:rgba(200,151,58,0.1);
-    color:var(--gold);
-  }
-
+  .statut-btn.selected { border-color:var(--gold); background:rgba(200,151,58,0.1); color:var(--gold); }
   .statut-icon { font-size:18px; }
-
-  /* SUBMIT */
-  .btn-submit {
-    width:100%;
-    padding:16px;
-    background:linear-gradient(135deg, var(--gold), var(--gold-l));
-    border:none;
-    border-radius:var(--radius);
-    font-family:'Syne', sans-serif;
-    font-size:15px;
-    font-weight:700;
-    color:#fff;
-    cursor:pointer;
-    transition:all 0.2s;
-    letter-spacing:0.3px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
-    margin-top:18px;
-  }
-
+  .btn-submit { width:100%; padding:16px; background:linear-gradient(135deg,var(--gold),var(--gold-l)); border:none; border-radius:var(--radius); font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#fff; cursor:pointer; transition:all 0.2s; letter-spacing:0.3px; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; }
   .btn-submit:active { transform:scale(0.98); opacity:0.9; }
   .btn-submit:disabled { opacity:0.35; cursor:default; transform:none; }
-
-  .btn-reset {
-    width:100%;
-    padding:13px;
-    background:transparent;
-    border:1px solid var(--border);
-    border-radius:var(--radius);
-    font-family:'DM Sans', sans-serif;
-    font-size:14px;
-    color:var(--text-mid);
-    cursor:pointer;
-    margin-top:10px;
-    transition:all 0.2s;
-  }
+  .btn-reset { width:100%; padding:13px; background:transparent; border:1px solid var(--border); border-radius:var(--radius); font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text-mid); cursor:pointer; margin-top:10px; transition:all 0.2s; }
   .btn-reset:active { background:var(--surface); }
-
-  /* TOAST */
-  .toast {
-    position:fixed;
-    bottom:24px;
-    left:50%;
-    transform:translateX(-50%) translateY(80px);
-    background:var(--success);
-    color:#fff;
-    padding:13px 24px;
-    border-radius:100px;
-    font-size:14px;
-    font-weight:600;
-    font-family:'Syne', sans-serif;
-    transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
-    z-index:200;
-    white-space:nowrap;
-    box-shadow:0 8px 30px rgba(46,204,138,0.3);
-  }
-
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--success); color:#fff; padding:13px 24px; border-radius:100px; font-size:14px; font-weight:600; font-family:'Syne',sans-serif; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index:200; white-space:nowrap; box-shadow:0 8px 30px rgba(46,204,138,0.3); }
   .toast.error-toast { background:var(--error); box-shadow:0 8px 30px rgba(224,92,92,0.3); }
   .toast.show { transform:translateX(-50%) translateY(0); }
-
-  /* CONFIG MODAL */
-  .modal-overlay {
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.7);
-    z-index:100;
-    display:none;
-    align-items:flex-end;
-    justify-content:center;
-    padding:0;
-  }
-
-  .modal-overlay.show { display:flex; }
-
-  .modal {
-    background:var(--bg-2);
-    border:1px solid var(--border);
-    border-radius:20px 20px 0 0;
-    padding:28px 20px 40px;
-    width:100%;
-    max-width:520px;
-    animation:slideUp 0.3s ease both;
-    max-height:85vh;
-    overflow-y:auto;
-  }
-
-  .modal-header {
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    margin-bottom:6px;
-  }
-
-  .modal-title {
-    font-family:'Syne', sans-serif;
-    font-size:17px;
-    font-weight:700;
-    color:var(--text);
-  }
-
-  .modal-close {
-    background:var(--surface);
-    border:none;
-    color:var(--text-mid);
-    font-size:18px;
-    cursor:pointer;
-    width:32px; height:32px;
-    border-radius:8px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-  }
-
-  .modal-sub { font-size:13px; color:var(--text-mid); margin-bottom:22px; line-height:1.5; }
-
-  .modal .field input {
-    font-size:13px;
-    padding:11px 13px;
-  }
-
-  .config-save {
-    width:100%;
-    padding:14px;
-    background:var(--gold);
-    border:none;
-    border-radius:var(--radius);
-    font-family:'Syne', sans-serif;
-    font-size:14px;
-    font-weight:700;
-    color:#fff;
-    cursor:pointer;
-    margin-top:8px;
-  }
-
-  .cfg-note {
-    font-size:12px;
-    color:var(--text-dim);
-    margin-top:6px;
-    line-height:1.5;
-  }
-
-  /* SPINNER */
-  .spinner {
-    width:18px; height:18px;
-    border:2px solid rgba(255,255,255,0.3);
-    border-top-color:#fff;
-    border-radius:50%;
-    animation:spin 0.7s linear infinite;
-    display:none;
-  }
-
-  /* DIVIDER */
   .sep { height:1px; background:var(--border); margin:20px 0; }
-
-  @keyframes slideUp {
-    from { opacity:0; transform:translateY(30px); }
-    to { opacity:1; transform:translateY(0); }
-  }
-
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(10px); }
-    to { opacity:1; transform:translateY(0); }
-  }
-
+  .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
   @keyframes spin { to { transform:rotate(360deg); } }
-
+  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   .main-form { animation:fadeUp 0.3s ease both; }
 </style>
 </head>
 <body>
 <div class="app">
-
-  <!-- HEADER -->
   <div class="header">
     <div class="logo">
       <div class="logo-mark">ML</div>
       <div class="logo-name">MYLAV</div>
     </div>
-    <button class="config-btn" onclick="openConfig()">⚙ Config</button>
+    <div style="font-size:12px;color:var(--text-dim);">Contacts Congrès</div>
   </div>
 
-  <!-- CONGRES -->
   <div class="congres-bar">
     <div style="font-size:18px">📍</div>
     <div class="congres-info">
@@ -462,25 +80,20 @@
     </div>
   </div>
 
-  <!-- COUNTER -->
   <div class="counter-bar">
     <span class="counter-label">Contacts enregistrés aujourd'hui</span>
     <span class="counter-num" id="counter">0</span>
   </div>
 
-  <!-- FORM -->
   <div class="main-form">
-
-    <!-- ASTUCE BADGE -->
     <div class="badge-hint">
       <div class="badge-hint-icon">💡</div>
       <div class="badge-hint-text">
-        <strong>Astuce badge</strong> — Maintenez appuyé sur un texte visible dans l'appareil photo (iOS) ou utilisez <strong>Google Lens</strong> (Android) pour copier le nom directement depuis le badge.
+        <strong>Astuce badge</strong> — iOS : maintenez appuyé sur le texte dans l'appareil photo → Copier. Android : utilisez <strong>Google Lens</strong> pour extraire le texte du badge.
       </div>
     </div>
 
-    <div class="section-title">Identité du vétérinaire</div>
-
+    <div class="section-title">Identité</div>
     <div class="row-2">
       <div class="field">
         <label class="field-label" for="f-prenom">Prénom</label>
@@ -493,23 +106,20 @@
     </div>
 
     <div class="section-title">Clinique</div>
-
     <div class="field">
       <label class="field-label" for="f-clinique">Nom de la clinique</label>
       <input type="text" id="f-clinique" placeholder="Clinique Vétérinaire des Pins" autocorrect="off" />
     </div>
-
     <div class="row-2">
       <div class="field">
         <label class="field-label" for="f-ville">Ville</label>
         <input type="text" id="f-ville" placeholder="Toulouse" autocorrect="off" />
       </div>
       <div class="field">
-        <label class="field-label" for="f-tel">Téléphone</label>
-        <input type="tel" id="f-tel" placeholder="05 61 00 00 00" />
+        <label class="field-label" for="f-cp">Code postal</label>
+        <input type="tel" id="f-cp" placeholder="31000" />
       </div>
     </div>
-
     <div class="field">
       <label class="field-label" for="f-email">Email</label>
       <input type="email" id="f-email" placeholder="marie.dupont@clinique.fr" autocapitalize="none" />
@@ -518,202 +128,98 @@
     <div class="sep"></div>
 
     <div class="section-title">Statut</div>
-
     <div class="statut-grid">
-      <button class="statut-btn" onclick="selectStatut(this,'Client MYLAV')">
-        <span class="statut-icon">✅</span>Déjà client
-      </button>
-      <button class="statut-btn" onclick="selectStatut(this,'Prospect chaud')">
-        <span class="statut-icon">🔥</span>Prospect chaud
-      </button>
-      <button class="statut-btn" onclick="selectStatut(this,'Prospect froid')">
-        <span class="statut-icon">❄️</span>Prospect froid
-      </button>
-      <button class="statut-btn" onclick="selectStatut(this,'À recontacter')">
-        <span class="statut-icon">📞</span>À recontacter
-      </button>
+      <button class="statut-btn" onclick="selectStatut(this,'Client MYLAV')"><span class="statut-icon">✅</span>Déjà client</button>
+      <button class="statut-btn" onclick="selectStatut(this,'Prospect chaud')"><span class="statut-icon">🔥</span>Prospect chaud</button>
+      <button class="statut-btn" onclick="selectStatut(this,'Prospect froid')"><span class="statut-icon">❄️</span>Prospect froid</button>
+      <button class="statut-btn" onclick="selectStatut(this,'À recontacter')"><span class="statut-icon">📞</span>À recontacter</button>
+    </div>
+
+    <div class="section-title">Commercial</div>
+    <div class="statut-grid">
+      <button class="commercial-btn statut-btn" onclick="selectCommercial(this,'Dominique')"><span class="statut-icon">👤</span>Dominique</button>
+      <button class="commercial-btn statut-btn" onclick="selectCommercial(this,'Julien')"><span class="statut-icon">👤</span>Julien</button>
+      <button class="commercial-btn statut-btn" onclick="selectCommercial(this,'Kristine')"><span class="statut-icon">👤</span>Kristine</button>
+      <button class="commercial-btn statut-btn" onclick="selectCommercial(this,'Quentin')"><span class="statut-icon">👤</span>Quentin</button>
     </div>
 
     <div class="sep"></div>
 
-    <div class="section-title">Note du commercial</div>
-
+    <div class="section-title">Note</div>
     <div class="field">
       <textarea id="f-note" placeholder="Intérêt exprimé, suite à donner, contexte…"></textarea>
     </div>
 
-    <button class="btn-submit" id="btn-submit" onclick="submitToNotion()">
+    <button class="btn-submit" id="btn-submit" onclick="submitToSheets()">
       <div class="spinner" id="spinner"></div>
-      <span id="btn-label">💾 Enregistrer dans Notion</span>
+      <span id="btn-label">💾 Enregistrer</span>
     </button>
-
     <button class="btn-reset" onclick="resetForm()">↺ Nouveau contact</button>
-
   </div>
 </div>
 
-<!-- CONFIG MODAL -->
-<div class="modal-overlay" id="modal-overlay" onclick="closeOutside(event)">
-  <div class="modal">
-    <div class="modal-header">
-      <div class="modal-title">⚙ Configuration</div>
-      <button class="modal-close" onclick="closeConfig()">×</button>
-    </div>
-    <p class="modal-sub">À renseigner une seule fois par téléphone. Les données sont sauvegardées localement.</p>
-
-    <div class="field">
-      <label class="field-label">Token d'intégration Notion</label>
-      <input type="password" id="cfg-notion-token" placeholder="secret_…" autocomplete="off" />
-    </div>
-    <p class="cfg-note">Notion → Settings → Connections → ton intégration MYLAV → copier le token</p>
-
-    <div class="field" style="margin-top:14px;">
-      <label class="field-label">ID de la base "Contacts Congrès"</label>
-      <input type="text" id="cfg-notion-db" placeholder="b0d14c27a9cd4bb382b7484e9d3f7900" autocomplete="off" autocorrect="off" />
-    </div>
-    <p class="cfg-note">ID de la base Notion créée pour les contacts congrès</p>
-
-    <div class="field" style="margin-top:14px;">
-      <label class="field-label">Ton prénom (commercial)</label>
-      <input type="text" id="cfg-commercial" placeholder="Ex : Quentin" />
-    </div>
-
-    <button class="config-save" onclick="saveConfig()">✓ Sauvegarder</button>
-  </div>
-</div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ── CONFIG ──────────────────────────────────────────
-function loadConfig() {
-  return {
-    notionToken: localStorage.getItem('ml_notion_token') || '',
-    notionDb: localStorage.getItem('ml_notion_db') || 'b0d14c27a9cd4bb382b7484e9d3f7900',
-    commercial: localStorage.getItem('ml_commercial') || ''
-  };
-}
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwzeCeZHcIAAldCprxAI8l5olR1I6Dfy1kBa7pCBevFXKvhc5WV3swkUZLwswGVTjnR/exec';
 
-function saveConfig() {
-  localStorage.setItem('ml_notion_token', document.getElementById('cfg-notion-token').value.trim());
-  localStorage.setItem('ml_notion_db', document.getElementById('cfg-notion-db').value.trim());
-  localStorage.setItem('ml_commercial', document.getElementById('cfg-commercial').value.trim());
-  closeConfig();
-  showToast('✓ Configuration sauvegardée', false);
-}
-
-function openConfig() {
-  const cfg = loadConfig();
-  document.getElementById('cfg-notion-token').value = cfg.notionToken;
-  document.getElementById('cfg-notion-db').value = cfg.notionDb;
-  document.getElementById('cfg-commercial').value = cfg.commercial;
-  document.getElementById('modal-overlay').classList.add('show');
-}
-
-function closeConfig() { document.getElementById('modal-overlay').classList.remove('show'); }
-function closeOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeConfig(); }
-
-// ── COUNTER ─────────────────────────────────────────
 let count = parseInt(sessionStorage.getItem('ml_count') || '0');
-function updateCounter() {
-  sessionStorage.setItem('ml_count', count);
-  document.getElementById('counter').textContent = count;
-}
+function updateCounter() { sessionStorage.setItem('ml_count', count); document.getElementById('counter').textContent = count; }
 updateCounter();
 
-// ── STATUT ──────────────────────────────────────────
 let selectedStatut = '';
+let selectedCommercial = '';
 
 function selectStatut(btn, val) {
-  document.querySelectorAll('.statut-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  selectedStatut = val;
+  document.querySelectorAll('.statut-btn:not(.commercial-btn)').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected'); selectedStatut = val;
 }
 
-// ── SUBMIT ──────────────────────────────────────────
-async function submitToNotion() {
-  const cfg = loadConfig();
+function selectCommercial(btn, val) {
+  document.querySelectorAll('.commercial-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected'); selectedCommercial = val;
+}
 
-  if (!cfg.notionToken) {
-    showToast('⚠ Configurez le token Notion (⚙ Config)', true);
-    return;
-  }
-
+async function submitToSheets() {
   const prenom = document.getElementById('f-prenom').value.trim();
   const nom = document.getElementById('f-nom').value.trim();
-
-  if (!prenom && !nom) {
-    showToast('⚠ Renseignez au moins le nom', true);
-    return;
-  }
-
+  if (!prenom && !nom) { showToast('⚠ Renseignez au moins le nom', true); return; }
   setLoading(true);
 
-  const congres = document.getElementById('congres-name').value.trim() || 'Non précisé';
-  const today = new Date().toISOString().split('T')[0];
-  const nomComplet = `${prenom} ${nom}`.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const tel = document.getElementById('f-tel').value.trim();
-
-  // Construction du payload Notion API directement
-  const properties = {
-    "Nom complet": { title: [{ text: { content: nomComplet } }] },
-    "Prénom": { rich_text: [{ text: { content: prenom } }] },
-    "Nom": { rich_text: [{ text: { content: nom } }] },
-    "Clinique": { rich_text: [{ text: { content: document.getElementById('f-clinique').value.trim() } }] },
-    "Ville": { rich_text: [{ text: { content: document.getElementById('f-ville').value.trim() } }] },
-    "Congrès": { rich_text: [{ text: { content: congres } }] },
-    "Date de contact": { date: { start: today } },
-    "Notes": { rich_text: [{ text: { content: document.getElementById('f-note').value.trim() } }] }
+  const payload = {
+    congres: document.getElementById('congres-name').value.trim() || 'Non précisé',
+    prenom, nom,
+    clinique: document.getElementById('f-clinique').value.trim(),
+    ville: document.getElementById('f-ville').value.trim(),
+    codepostal: document.getElementById('f-cp').value.trim(),
+    email: document.getElementById('f-email').value.trim(),
+    statut: selectedStatut,
+    commercial: selectedCommercial,
+    note: document.getElementById('f-note').value.trim()
   };
 
-  if (tel) properties["Téléphone"] = { phone_number: tel };
-  if (email) properties["Email"] = { email: email };
-  if (selectedStatut) properties["Statut"] = { select: { name: selectedStatut } };
-  if (cfg.commercial) properties["Commercial"] = { select: { name: cfg.commercial } };
-
-  const dbId = cfg.notionDb.replace(/-/g, '');
-
   try {
-    const res = await fetch(`https://api.notion.com/v1/pages`, {
+    await fetch(SHEET_URL, {
       method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${cfg.notionToken}`,
-        'Content-Type': 'application/json',
-        'Notion-Version': '2022-06-28'
-      },
-      body: JSON.stringify({
-        parent: { database_id: dbId },
-        properties
-      })
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
     });
-
-    const data = await res.json();
-
-    if (res.ok) {
-      count++;
-      updateCounter();
-      showToast(`✓ ${nomComplet} enregistré dans Notion`, false);
-      resetForm();
-    } else {
-      console.error('Notion error:', data);
-      showToast(`⚠ Erreur Notion : ${data.message || 'vérifiez la config'}`, true);
-    }
-
+    count++;
+    updateCounter();
+    showToast('✓ ' + prenom + ' ' + nom + ' enregistré', false);
+    resetForm();
   } catch(err) {
     console.error(err);
-    showToast('⚠ Erreur réseau — vérifiez votre connexion', true);
+    showToast('⚠ Erreur réseau — réessayez', true);
   }
-
   setLoading(false);
 }
 
-// ── HELPERS ─────────────────────────────────────────
 function setLoading(on) {
   document.getElementById('btn-submit').disabled = on;
   document.getElementById('spinner').style.display = on ? 'block' : 'none';
-  document.getElementById('btn-label').textContent = on ? 'Enregistrement…' : '💾 Enregistrer dans Notion';
+  document.getElementById('btn-label').textContent = on ? 'Enregistrement…' : '💾 Enregistrer';
 }
 
 function showToast(msg, isError) {
@@ -725,21 +231,11 @@ function showToast(msg, isError) {
 }
 
 function resetForm() {
-  ['f-prenom','f-nom','f-clinique','f-ville','f-tel','f-email','f-note'].forEach(id => {
-    document.getElementById(id).value = '';
-  });
+  ['f-prenom','f-nom','f-clinique','f-ville','f-cp','f-email','f-note'].forEach(id => { document.getElementById(id).value = ''; });
   document.querySelectorAll('.statut-btn').forEach(b => b.classList.remove('selected'));
-  selectedStatut = '';
+  selectedStatut = ''; selectedCommercial = '';
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-
-// Pré-remplir l'ID de la base si pas encore configuré
-window.addEventListener('load', () => {
-  const cfg = loadConfig();
-  if (!cfg.notionDb) {
-    localStorage.setItem('ml_notion_db', 'b0d14c27a9cd4bb382b7484e9d3f7900');
-  }
-});
 </script>
 </body>
 </html>
