@@ -1,411 +1,132 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>MYLAV · Contacts Congrès</title>
-<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy: #1a2744; --navy-2: #253460; --gold: #C8973A; --gold-l: #e8b55a;
-    --bg: #0f1829; --bg-2: #162035; --surface: #1e2d4a; --surface-2: #243558;
-    --border: rgba(255,255,255,0.08); --border-gold: rgba(200,151,58,0.35);
-    --text: #e8edf5; --text-mid: #8a9bc0; --text-dim: #4a5a7a;
-    --success: #2ecc8a; --error: #e05c5c; --radius: 14px;
+// ==============================================
+// Google Apps Script — MYLAV Contacts Congrès
+// VERSION CORRIGÉE — Compatible ancien et nouveau HTML
+// ==============================================
+// Colonnes du Sheet :
+// A: Clinique | B: Contact | C: Adresse mail | D: Ville
+// E: Code postal | F: Commentaires | G: Commercial référent
+// H: Statut du contact | I: Action réalisée | J: Date du dernier contact
+// K: Prochaine action | L: CA 2025
+
+var SHEET_NAME = 'Contacts congrès 2026'; // Adapter si le nom de l'onglet est différent
+
+// ---- GET : lire les contacts ----
+function doGet(e) {
+  var action = (e && e.parameter && e.parameter.action) ? e.parameter.action : '';
+
+  if (action === 'getContacts') {
+    return getContacts();
   }
-  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text); min-height:100vh; }
-  body::before { content:''; position:fixed; inset:0; background:radial-gradient(ellipse 80% 40% at 50% 0%,rgba(200,151,58,0.07) 0%,transparent 60%); pointer-events:none; z-index:0; }
-  .app { width:100%; max-width:520px; margin:0 auto; padding:0 16px 80px; position:relative; z-index:1; }
-  .header { display:flex; align-items:center; justify-content:space-between; padding:18px 0 22px; }
-  .logo { display:flex; align-items:center; gap:9px; }
-  .logo-mark { width:34px; height:34px; border-radius:9px; background:linear-gradient(135deg,var(--navy-2),var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Syne',sans-serif; font-weight:800; font-size:13px; color:#fff; letter-spacing:0.5px; }
-  .logo-name { font-family:'Syne',sans-serif; font-weight:700; font-size:17px; color:var(--text); letter-spacing:2px; }
-  .congres-bar { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:12px 16px; display:flex; align-items:center; gap:10px; margin-bottom:14px; }
-  .congres-bar:focus-within { border-color:var(--border-gold); }
-  .congres-info { flex:1; }
-  .congres-label { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--text-mid); margin-bottom:3px; }
-  .congres-select { background:transparent; border:none; outline:none; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; color:var(--text); width:100%; appearance:none; -webkit-appearance:none; -moz-appearance:none; cursor:pointer; }
-  .congres-select option { background:var(--surface); color:var(--text); font-family:'DM Sans',sans-serif; font-size:14px; }
-  .select-wrapper { position:relative; flex:1; }
-  .select-arrow { position:absolute; right:0; top:50%; transform:translateY(-50%); pointer-events:none; color:var(--text-dim); font-size:12px; }
-  .counter-bar { display:flex; align-items:center; justify-content:space-between; background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:10px 16px; margin-bottom:18px; cursor:pointer; transition:border-color 0.2s; }
-  .counter-bar:active { border-color:var(--border-gold); }
-  .counter-label { font-size:13px; color:var(--text-mid); }
-  .counter-right { display:flex; align-items:center; gap:10px; }
-  .counter-num { font-family:'Syne',sans-serif; font-size:22px; font-weight:700; color:var(--gold); }
-  .counter-arrow { font-size:14px; color:var(--text-dim); transition:transform 0.2s; }
-  .counter-arrow.open { transform:rotate(180deg); }
-  .section-title { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:1.5px; color:var(--text-dim); margin-bottom:10px; margin-top:18px; }
-  .badge-hint { background:rgba(200,151,58,0.07); border:1px solid var(--border-gold); border-radius:10px; padding:11px 14px; display:flex; align-items:flex-start; gap:10px; margin-bottom:16px; }
-  .badge-hint-icon { font-size:18px; flex-shrink:0; margin-top:1px; }
-  .badge-hint-text { font-size:12px; color:var(--text-mid); line-height:1.5; }
-  .badge-hint-text strong { color:var(--gold); font-weight:500; }
-  .row-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-  .field { margin-bottom:10px; }
-  .field-label { font-size:11px; font-weight:500; text-transform:uppercase; letter-spacing:1px; color:var(--text-mid); margin-bottom:6px; display:block; }
-  .field input, .field textarea { width:100%; background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:13px 14px; font-family:'DM Sans',sans-serif; font-size:15px; color:var(--text); outline:none; transition:border-color 0.2s; appearance:none; -webkit-appearance:none; }
-  .field input:focus, .field textarea:focus { border-color:var(--border-gold); background:var(--surface-2); }
-  .field input::placeholder, .field textarea::placeholder { color:var(--text-dim); }
-  .field textarea { resize:none; min-height:80px; font-size:14px; }
-  .statut-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:10px; }
-  .statut-btn { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:11px 8px; cursor:pointer; text-align:center; transition:all 0.15s; font-family:'DM Sans',sans-serif; font-size:12px; font-weight:500; color:var(--text-mid); display:flex; flex-direction:column; align-items:center; gap:4px; }
-  .statut-btn:active { transform:scale(0.97); }
-  .statut-btn.selected { border-color:var(--gold); background:rgba(200,151,58,0.1); color:var(--gold); }
-  .statut-icon { font-size:18px; }
-  .btn-submit { width:100%; padding:16px; background:linear-gradient(135deg,var(--gold),var(--gold-l)); border:none; border-radius:var(--radius); font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#fff; cursor:pointer; transition:all 0.2s; letter-spacing:0.3px; display:flex; align-items:center; justify-content:center; gap:8px; margin-top:18px; }
-  .btn-submit:active { transform:scale(0.98); opacity:0.9; }
-  .btn-submit:disabled { opacity:0.35; cursor:default; transform:none; }
-  .btn-reset { width:100%; padding:13px; background:transparent; border:1px solid var(--border); border-radius:var(--radius); font-family:'DM Sans',sans-serif; font-size:14px; color:var(--text-mid); cursor:pointer; margin-top:10px; transition:all 0.2s; }
-  .btn-reset:active { background:var(--surface); }
-  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--success); color:#fff; padding:13px 24px; border-radius:100px; font-size:14px; font-weight:600; font-family:'Syne',sans-serif; transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); z-index:200; white-space:nowrap; box-shadow:0 8px 30px rgba(46,204,138,0.3); }
-  .toast.error-toast { background:var(--error); box-shadow:0 8px 30px rgba(224,92,92,0.3); }
-  .toast.show { transform:translateX(-50%) translateY(0); }
-  .sep { height:1px; background:var(--border); margin:20px 0; }
-  .spinner { width:18px; height:18px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; display:none; }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  @keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
-  .main-form { animation:fadeUp 0.3s ease both; }
-  .contacts-panel { display:none; margin-bottom:18px; animation:fadeUp 0.25s ease both; }
-  .contacts-panel.open { display:block; }
-  .contacts-list { display:flex; flex-direction:column; gap:6px; }
-  .contact-card { background:var(--surface); border:1.5px solid var(--border); border-radius:10px; padding:12px 14px; cursor:pointer; transition:all 0.15s; display:flex; align-items:center; justify-content:space-between; }
-  .contact-card:active { transform:scale(0.98); }
-  .contact-card:hover { border-color:var(--border-gold); }
-  .contact-card.editing { border-color:var(--gold); background:rgba(200,151,58,0.06); }
-  .contact-card-info { flex:1; min-width:0; }
-  .contact-card-name { font-family:'Syne',sans-serif; font-weight:600; font-size:14px; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .contact-card-detail { font-size:11px; color:var(--text-mid); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .contact-card-statut { font-size:10px; font-weight:500; padding:4px 8px; border-radius:6px; background:rgba(200,151,58,0.12); color:var(--gold); white-space:nowrap; margin-left:10px; }
-  .contact-card-edit { font-size:16px; margin-left:10px; color:var(--text-dim); flex-shrink:0; }
-  .contacts-empty { text-align:center; padding:16px; font-size:13px; color:var(--text-dim); }
-  .contacts-loading { text-align:center; padding:20px; }
-  .contacts-loading .spinner { display:inline-block; width:22px; height:22px; border-width:2.5px; }
-  .editing-banner { background:rgba(200,151,58,0.1); border:1px solid var(--border-gold); border-radius:10px; padding:10px 14px; margin-bottom:14px; display:none; align-items:center; justify-content:space-between; animation:fadeUp 0.2s ease both; }
-  .editing-banner.show { display:flex; }
-  .editing-banner-text { font-size:12px; color:var(--gold); font-weight:500; }
-  .editing-banner-cancel { font-size:12px; color:var(--text-mid); cursor:pointer; padding:4px 10px; border-radius:6px; border:1px solid var(--border); background:transparent; font-family:'DM Sans',sans-serif; transition:all 0.15s; }
-  .editing-banner-cancel:active { background:var(--surface); }
-</style>
-</head>
-<body>
-<div class="app">
-  <div class="header">
-    <div class="logo">
-      <div class="logo-mark">ML</div>
-      <div class="logo-name">MYLAV</div>
-    </div>
-    <div style="font-size:12px;color:var(--text-dim);">Contacts Congrès</div>
-  </div>
 
-  <div class="congres-bar">
-    <div style="font-size:18px">📍</div>
-    <div class="congres-info">
-      <div class="congres-label">Congrès actuel</div>
-      <div class="select-wrapper">
-        <select class="congres-select" id="congres-name">
-          <option value="" disabled selected>Sélectionnez le congrès</option>
-          <option value="GEO - Le Pouliguen">GEO - Le Pouliguen</option>
-          <option value="JiVéFranco - Saint-Malo">JiVéFranco - Saint-Malo</option>
-          <option value="Le Chat - Arcachon">Le Chat - Arcachon</option>
-          <option value="Ateliers du Sud-Est - Grasse">Ateliers du Sud-Est - Grasse</option>
-        </select>
-        <div class="select-arrow">▼</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="counter-bar" onclick="toggleContactsPanel()">
-    <span class="counter-label">Contacts enregistrés</span>
-    <div class="counter-right">
-      <span class="counter-num" id="counter">0</span>
-      <span class="counter-arrow" id="counter-arrow">▼</span>
-    </div>
-  </div>
-
-  <div class="contacts-panel" id="contacts-panel">
-    <div class="contacts-loading" id="contacts-loading">
-      <div class="spinner" style="display:inline-block;"></div>
-    </div>
-    <div class="contacts-list" id="contacts-list"></div>
-    <div class="contacts-empty" id="contacts-empty" style="display:none;">Aucun contact enregistré.</div>
-  </div>
-
-  <div class="main-form">
-    <div class="editing-banner" id="editing-banner">
-      <span class="editing-banner-text" id="editing-banner-text">✏️ Modification en cours</span>
-      <button class="editing-banner-cancel" onclick="cancelEditing()">Annuler</button>
-    </div>
-
-    <div class="badge-hint">
-      <div class="badge-hint-icon">💡</div>
-      <div class="badge-hint-text">
-        <strong>Astuce badge</strong> — iOS : maintenez appuyé sur le texte dans l'appareil photo → Copier. Android : utilisez <strong>Google Lens</strong> pour extraire le texte du badge.
-      </div>
-    </div>
-
-    <div class="section-title">Contact</div>
-    <div class="field">
-      <label class="field-label" for="f-contact">Nom du contact</label>
-      <input type="text" id="f-contact" placeholder="Cap Nancy" autocomplete="off" autocorrect="off" spellcheck="false" />
-    </div>
-
-    <div class="section-title">Clinique</div>
-    <div class="field">
-      <label class="field-label" for="f-clinique">Nom de la clinique</label>
-      <input type="text" id="f-clinique" placeholder="Clinique Vétérinaire des Pins" autocorrect="off" />
-    </div>
-    <div class="row-2">
-      <div class="field">
-        <label class="field-label" for="f-ville">Ville</label>
-        <input type="text" id="f-ville" placeholder="Toulouse" autocorrect="off" />
-      </div>
-      <div class="field">
-        <label class="field-label" for="f-cp">Code postal</label>
-        <input type="tel" id="f-cp" placeholder="31000" />
-      </div>
-    </div>
-    <div class="field">
-      <label class="field-label" for="f-email">Adresse mail</label>
-      <input type="email" id="f-email" placeholder="marie.dupont@clinique.fr" autocapitalize="none" />
-    </div>
-
-    <div class="sep"></div>
-
-    <div class="section-title">Statut du contact</div>
-    <div class="statut-grid">
-      <button class="statut-btn" data-val="Client MYLAV" onclick="selectStatut(this,'Client MYLAV')"><span class="statut-icon">✅</span>Déjà client</button>
-      <button class="statut-btn" data-val="Intéressé" onclick="selectStatut(this,'Intéressé')"><span class="statut-icon">⭐</span>Intéressé</button>
-      <button class="statut-btn" data-val="À suivre" onclick="selectStatut(this,'À suivre')"><span class="statut-icon">📋</span>À suivre</button>
-      <button class="statut-btn" data-val="À recontacter" onclick="selectStatut(this,'À recontacter')"><span class="statut-icon">📞</span>À recontacter</button>
-    </div>
-
-    <div class="section-title">Commercial</div>
-    <div class="statut-grid">
-      <button class="commercial-btn statut-btn" data-val="Dominique" onclick="selectCommercial(this,'Dominique')"><span class="statut-icon">👤</span>Dominique</button>
-      <button class="commercial-btn statut-btn" data-val="Julien" onclick="selectCommercial(this,'Julien')"><span class="statut-icon">👤</span>Julien</button>
-      <button class="commercial-btn statut-btn" data-val="Kristine" onclick="selectCommercial(this,'Kristine')"><span class="statut-icon">👤</span>Kristine</button>
-      <button class="commercial-btn statut-btn" data-val="Quentin" onclick="selectCommercial(this,'Quentin')"><span class="statut-icon">👤</span>Quentin</button>
-    </div>
-
-    <div class="sep"></div>
-
-    <div class="section-title">Commentaires</div>
-    <div class="field">
-      <textarea id="f-commentaires" placeholder="Intérêt exprimé, suite à donner, contexte…"></textarea>
-    </div>
-
-    <button class="btn-submit" id="btn-submit" onclick="submitToSheets()">
-      <div class="spinner" id="spinner"></div>
-      <span id="btn-label">💾 Enregistrer</span>
-    </button>
-    <button class="btn-reset" onclick="cancelEditing(); resetForm();">↺ Nouveau contact</button>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const SHEET_URL = 'https://script.google.com/macros/s/AKfycbwzeCeZHcIAAldCprxAI8l5olR1I6Dfy1kBa7pCBevFXKvhc5WV3swkUZLwswGVTjnR/exec';
-
-let count = parseInt(sessionStorage.getItem('ml_count') || '0');
-let selectedStatut = '';
-let selectedCommercial = '';
-let editingRow = null;
-let contactsData = [];
-let panelOpen = false;
-
-function updateCounter(n) {
-  if (n !== undefined) count = n;
-  sessionStorage.setItem('ml_count', count);
-  document.getElementById('counter').textContent = count;
-}
-updateCounter();
-
-function selectStatut(btn, val) {
-  document.querySelectorAll('.statut-btn:not(.commercial-btn)').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected'); selectedStatut = val;
-}
-function selectCommercial(btn, val) {
-  document.querySelectorAll('.commercial-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected'); selectedCommercial = val;
+  return ContentService.createTextOutput(JSON.stringify({ status: 'ok' }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
 
-// --- Contacts panel ---
-function toggleContactsPanel() {
-  panelOpen = !panelOpen;
-  const panel = document.getElementById('contacts-panel');
-  const arrow = document.getElementById('counter-arrow');
-  if (panelOpen) {
-    panel.classList.add('open');
-    arrow.classList.add('open');
-    loadContacts();
-  } else {
-    panel.classList.remove('open');
-    arrow.classList.remove('open');
+function getContacts() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.getActiveSheet();
   }
-}
 
-async function loadContacts() {
-  const listEl = document.getElementById('contacts-list');
-  const loadingEl = document.getElementById('contacts-loading');
-  const emptyEl = document.getElementById('contacts-empty');
-  listEl.innerHTML = '';
-  loadingEl.style.display = 'block';
-  emptyEl.style.display = 'none';
+  var data = sheet.getDataRange().getValues();
+  if (data.length <= 1) {
+    return ContentService.createTextOutput(JSON.stringify([]))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
 
-  try {
-    const res = await fetch(SHEET_URL + '?action=getContacts');
-    const data = await res.json();
-    contactsData = data || [];
-    loadingEl.style.display = 'none';
+  // Colonnes : A=Clinique, B=Contact, C=Email, D=Ville, E=CP, F=Commentaires, G=Commercial, H=Statut
+  var contacts = [];
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    // Ignorer les lignes vides (pas de contact)
+    if (!row[1]) continue;
+    // Ignorer les lignes de séparation/titre (colonne A remplie mais B vide)
+    if (row[0] && !row[1]) continue;
 
-    if (contactsData.length === 0) {
-      emptyEl.style.display = 'block';
-      updateCounter(0);
-      return;
-    }
-
-    updateCounter(contactsData.length);
-
-    // Most recent first
-    const reversed = [...contactsData].reverse();
-    reversed.forEach((c) => {
-      const card = document.createElement('div');
-      card.className = 'contact-card' + (editingRow === c.row ? ' editing' : '');
-      card.onclick = () => editContact(c.row);
-      card.innerHTML =
-        '<div class="contact-card-info">' +
-          '<div class="contact-card-name">' + esc(c.contact || '') + '</div>' +
-          '<div class="contact-card-detail">' + esc(c.clinique || '—') + ' · ' + esc(c.ville || '') + '</div>' +
-        '</div>' +
-        (c.statut ? '<div class="contact-card-statut">' + esc(c.statut) + '</div>' : '') +
-        '<div class="contact-card-edit">✏️</div>';
-      listEl.appendChild(card);
+    contacts.push({
+      row: i + 1,
+      clinique: row[0] || '',
+      contact: row[1] || '',
+      email: row[2] || '',
+      ville: row[3] || '',
+      codepostal: row[4] || '',
+      commentaires: row[5] || '',
+      commercial: row[6] || '',
+      statut: row[7] || ''
     });
+  }
+
+  return ContentService.createTextOutput(JSON.stringify(contacts))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+// ---- POST : créer ou modifier un contact ----
+function doPost(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SHEET_NAME);
+  if (!sheet) {
+    sheet = ss.getActiveSheet();
+  }
+
+  var data;
+  try {
+    data = JSON.parse(e.postData.contents);
   } catch (err) {
-    console.error(err);
-    loadingEl.style.display = 'none';
-    emptyEl.textContent = '⚠ Impossible de charger les contacts.';
-    emptyEl.style.display = 'block';
-  }
-}
-
-function esc(s) { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-// --- Edit contact ---
-function editContact(rowNum) {
-  const c = contactsData.find(x => x.row === rowNum);
-  if (!c) return;
-  editingRow = rowNum;
-
-  document.getElementById('f-contact').value = c.contact || '';
-  document.getElementById('f-clinique').value = c.clinique || '';
-  document.getElementById('f-ville').value = c.ville || '';
-  document.getElementById('f-cp').value = c.codepostal || '';
-  document.getElementById('f-email').value = c.email || '';
-  document.getElementById('f-commentaires').value = c.commentaires || '';
-
-  // Select statut
-  selectedStatut = c.statut || '';
-  document.querySelectorAll('.statut-btn:not(.commercial-btn)').forEach(b => {
-    b.classList.remove('selected');
-    if (b.dataset.val === selectedStatut) b.classList.add('selected');
-  });
-
-  // Select commercial
-  selectedCommercial = c.commercial || '';
-  document.querySelectorAll('.commercial-btn').forEach(b => {
-    b.classList.remove('selected');
-    if (b.dataset.val === selectedCommercial) b.classList.add('selected');
-  });
-
-  // Show editing banner
-  document.getElementById('editing-banner-text').textContent = '✏️ Modification : ' + (c.contact || '');
-  document.getElementById('editing-banner').classList.add('show');
-  document.getElementById('btn-label').textContent = '✏️ Modifier';
-
-  document.querySelector('.main-form').scrollIntoView({ behavior:'smooth', block:'start' });
-}
-
-function cancelEditing() {
-  editingRow = null;
-  document.getElementById('editing-banner').classList.remove('show');
-  document.getElementById('btn-label').textContent = '💾 Enregistrer';
-}
-
-// --- Submit ---
-async function submitToSheets() {
-  const contact = document.getElementById('f-contact').value.trim();
-  if (!contact) { showToast('⚠ Renseignez le nom du contact', true); return; }
-  setLoading(true);
-
-  // Payload matches Sheet columns: Clinique, Contact, Email, Ville, CP, Commentaires, Commercial, Statut
-  const payload = {
-    clinique: document.getElementById('f-clinique').value.trim(),
-    contact: contact,
-    email: document.getElementById('f-email').value.trim(),
-    ville: document.getElementById('f-ville').value.trim(),
-    codepostal: document.getElementById('f-cp').value.trim(),
-    commentaires: document.getElementById('f-commentaires').value.trim(),
-    commercial: selectedCommercial,
-    statut: selectedStatut
-  };
-
-  if (editingRow !== null) {
-    payload.action = 'update';
-    payload.row = editingRow;
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'Invalid JSON' }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
 
-  try {
-    await fetch(SHEET_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
+  // Gérer le champ contact : soit "contact" (nouveau HTML), soit "prenom"+"nom" (ancien HTML)
+  var contactName = '';
+  if (data.contact) {
+    contactName = data.contact;
+  } else if (data.prenom || data.nom) {
+    contactName = ((data.prenom || '') + ' ' + (data.nom || '')).trim();
+  }
 
-    if (editingRow !== null) {
-      showToast('✓ ' + contact + ' modifié', false);
-      cancelEditing();
-    } else {
-      count++;
-      updateCounter();
-      showToast('✓ ' + contact + ' enregistré', false);
+  // Gérer le champ commentaires : soit "commentaires" (nouveau HTML), soit "note" (ancien HTML)
+  var commentaires = data.commentaires || data.note || '';
+
+  // Construire la ligne de 12 colonnes (A à L) — identique à l'ancien script
+  var values = [
+    data.clinique || '',                          // A: Clinique
+    contactName,                                   // B: Contact
+    data.email || '',                              // C: Adresse mail
+    data.ville || '',                              // D: Ville
+    data.codepostal || '',                         // E: Code postal
+    commentaires,                                  // F: Commentaires
+    data.commercial || '',                         // G: Commercial référent
+    data.statut || '',                             // H: Statut du contact
+    '',                                            // I: Action réalisée (vide)
+    new Date().toLocaleDateString('fr-FR'),         // J: Date du dernier contact
+    '',                                            // K: Prochaine action (vide)
+    ''                                             // L: CA 2025 (vide)
+  ];
+
+  if (data.action === 'update' && data.row) {
+    // Modifier une ligne existante — écrire uniquement les 8 premières colonnes
+    // pour ne pas écraser les colonnes I à L remplies par les commerciaux
+    var rowNum = parseInt(data.row);
+    if (rowNum >= 2 && rowNum <= sheet.getLastRow()) {
+      var updateValues = [
+        data.clinique || '',
+        contactName,
+        data.email || '',
+        data.ville || '',
+        data.codepostal || '',
+        commentaires,
+        data.commercial || '',
+        data.statut || ''
+      ];
+      var range = sheet.getRange(rowNum, 1, 1, 8); // Colonnes A à H seulement
+      range.setValues([updateValues]);
     }
-    resetForm();
-    if (panelOpen) setTimeout(loadContacts, 1200);
-  } catch(err) {
-    console.error(err);
-    showToast('⚠ Erreur réseau — réessayez', true);
-  }
-  setLoading(false);
-}
-
-function setLoading(on) {
-  document.getElementById('btn-submit').disabled = on;
-  document.getElementById('spinner').style.display = on ? 'block' : 'none';
-  if (on) {
-    document.getElementById('btn-label').textContent = editingRow !== null ? 'Modification…' : 'Enregistrement…';
   } else {
-    document.getElementById('btn-label').textContent = editingRow !== null ? '✏️ Modifier' : '💾 Enregistrer';
+    // Nouvelle ligne — écrire les 12 colonnes
+    sheet.appendRow(values);
   }
-}
 
-function showToast(msg, isError) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast' + (isError ? ' error-toast' : '');
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3000);
+  return ContentService.createTextOutput(JSON.stringify({ status: 'success' }))
+    .setMimeType(ContentService.MimeType.JSON);
 }
-
-function resetForm() {
-  ['f-contact','f-clinique','f-ville','f-cp','f-email','f-commentaires'].forEach(id => { document.getElementById(id).value = ''; });
-  document.querySelectorAll('.statut-btn').forEach(b => b.classList.remove('selected'));
-  selectedStatut = ''; selectedCommercial = '';
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-</script>
-</body>
-</html>
